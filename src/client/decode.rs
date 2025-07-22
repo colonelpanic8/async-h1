@@ -96,7 +96,7 @@ where
     // Check for Content-Length.
     if let Some(len) = content_length {
         let len = len.last().as_str().parse::<usize>()?;
-        res.set_body(Body::from_reader(reader.take(len as u64), Some(len)));
+        res.set_body(Body::from_reader(reader.take(len as u64), Some(len as u64)));
     }
 
     // Return the response.
