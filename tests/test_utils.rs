@@ -1,4 +1,4 @@
-use async_h1::{
+use async_h1_2::{
     client::Encoder,
     server::{ConnectionStatus, Server},
 };

@@ -80,7 +80,7 @@ where
     req.set_version(Some(http_types::Version::Http1_1));
 
     for header in httparse_req.headers.iter() {
-        req.append_header(header.name, std::str::from_utf8(header.value)?);
+        let _ = req.append_header(header.name, std::str::from_utf8(header.value)?);
     }
 
     let content_length = ContentLength::from_headers(&req)?;
@@ -134,7 +134,7 @@ where
         let reader = Arc::new(Mutex::new(reader.take(len)));
         req.set_body(Body::from_reader(
             BufReader::new(ReadNotifier::new(reader.clone(), body_read_sender)),
-            Some(len as u64),
+            Some(len),
         ));
         Ok(Some((req, BodyReader::Fixed(reader))))
     } else {
@@ -157,9 +157,9 @@ fn url_from_httparse_req(req: &httparse::Request<'_, '_>) -> http_types::Result<
     if path.starts_with("http://") || path.starts_with("https://") {
         Ok(Url::parse(path)?)
     } else if path.starts_with('/') {
-        Ok(Url::parse(&format!("http://{}{}", host, path))?)
+        Ok(Url::parse(&format!("http://{host}{path}"))?)
     } else if req.method.unwrap().eq_ignore_ascii_case("connect") {
-        Ok(Url::parse(&format!("http://{}/", path))?)
+        Ok(Url::parse(&format!("http://{path}/"))?)
     } else {
         Err(format_err!("unexpected uri format"))
     }

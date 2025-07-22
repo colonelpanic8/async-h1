@@ -36,24 +36,24 @@ impl Encoder {
                 .to_owned();
 
             if let Some(port) = url.port() {
-                self.request
-                    .insert_header(HOST, format!("{}:{}", host, port));
+                let _ = self.request
+                    .insert_header(HOST, format!("{host}:{port}"));
             } else {
-                self.request.insert_header(HOST, host);
+                let _ = self.request.insert_header(HOST, host);
             };
         }
 
         // Insert Proxy-Connection header when method is CONNECT
         if self.request.method() == Method::Connect {
-            self.request.insert_header("proxy-connection", "keep-alive");
+            let _ = self.request.insert_header("proxy-connection", "keep-alive");
         }
 
         // If the body isn't streaming, we can set the content-length ahead of time. Else we need to
         // send all items in chunks.
         if let Some(len) = self.request.len() {
-            self.request.insert_header(CONTENT_LENGTH, len.to_string());
+            let _ = self.request.insert_header(CONTENT_LENGTH, len.to_string());
         } else {
-            self.request.insert_header(TRANSFER_ENCODING, "chunked");
+            let _ = self.request.insert_header(TRANSFER_ENCODING, "chunked");
         }
 
         Ok(())
@@ -63,7 +63,7 @@ impl Encoder {
         let mut buf = Vec::with_capacity(128);
         let url = self.request.url();
         let method = self.request.method();
-        write!(buf, "{} ", method)?;
+        write!(buf, "{method} ")?;
 
         // A client sending a CONNECT request MUST consists of only the host
         // name and port number of the tunnel destination, separated by a colon.
@@ -80,11 +80,11 @@ impl Encoder {
                 )
             })?;
 
-            write!(buf, "{}:{}", host, port)?;
+            write!(buf, "{host}:{port}")?;
         } else {
             write!(buf, "{}", url.path())?;
             if let Some(query) = url.query() {
-                write!(buf, "?{}", query)?;
+                write!(buf, "?{query}")?;
             }
         }
 
@@ -95,7 +95,7 @@ impl Encoder {
         headers.sort_unstable_by_key(|(h, _)| if **h == HOST { "0" } else { h.as_str() });
         for (header, values) in headers {
             for value in values.iter() {
-                write!(buf, "{}: {}\r\n", header, value)?;
+                write!(buf, "{header}: {value}\r\n")?;
             }
         }
 

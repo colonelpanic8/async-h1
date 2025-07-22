@@ -60,7 +60,7 @@ impl fmt::Debug for State {
             State::ChunkBody => write!(f, "State::ChunkBody"),
             State::ChunkBodyExpectCr => write!(f, "State::ChunkBodyExpectCr"),
             State::ChunkBodyExpectLf => write!(f, "State::ChunkBodyExpectLf"),
-            State::Trailers(len, _) => write!(f, "State::Trailers({}, _)", len),
+            State::Trailers(len, _) => write!(f, "State::Trailers({len}, _)"),
             State::TrailerSending(_) => write!(f, "State::TrailerSending"),
             State::Done => write!(f, "State::Done"),
         }
@@ -111,7 +111,7 @@ fn eof<T>() -> Poll<io::Result<T>> {
 fn unexpected<T>(byte: u8, expected: &'static str) -> Poll<io::Result<T>> {
     Poll::Ready(Err(io::Error::new(
         io::ErrorKind::InvalidData,
-        format!("Unexpected byte {}; expected {}", byte, expected),
+        format!("Unexpected byte {byte}; expected {expected}"),
     )))
 }
 
@@ -212,7 +212,7 @@ impl<R: Read + Unpin> Read for ChunkedDecoder<R> {
                             }
                             let mut trailers = Trailers::new();
                             for header in headers {
-                                trailers.insert(
+                                let _ = trailers.insert(
                                     header.name,
                                     String::from_utf8_lossy(header.value).as_ref(),
                                 );

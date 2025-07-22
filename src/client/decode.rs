@@ -66,12 +66,12 @@ where
 
     let mut res = Response::new(StatusCode::try_from(code)?);
     for header in httparse_res.headers.iter() {
-        res.append_header(header.name, std::str::from_utf8(header.value)?);
+        let _ = res.append_header(header.name, std::str::from_utf8(header.value)?);
     }
 
     if res.header(DATE).is_none() {
         let date = fmt_http_date(std::time::SystemTime::now());
-        res.insert_header(DATE, &format!("date: {}\r\n", date)[..]);
+        let _ = res.insert_header(DATE, &format!("date: {date}\r\n")[..]);
     }
 
     let content_length = res.header(CONTENT_LENGTH);

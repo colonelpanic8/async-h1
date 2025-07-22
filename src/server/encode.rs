@@ -67,14 +67,14 @@ impl Encoder {
         // If the body isn't streaming, we can set the content-length ahead of time. Else we need to
         // send all items in chunks.
         if let Some(len) = self.response.len() {
-            self.response.insert_header(CONTENT_LENGTH, len.to_string());
+            let _ = self.response.insert_header(CONTENT_LENGTH, len.to_string());
         } else {
-            self.response.insert_header(TRANSFER_ENCODING, "chunked");
+            let _ = self.response.insert_header(TRANSFER_ENCODING, "chunked");
         }
 
         if self.response.header(DATE).is_none() {
             let date = fmt_http_date(SystemTime::now());
-            self.response.insert_header(DATE, date);
+            let _ = self.response.insert_header(DATE, date);
         }
     }
 
@@ -83,14 +83,14 @@ impl Encoder {
         let mut head = Vec::with_capacity(128);
         let reason = self.response.status().canonical_reason();
         let status = self.response.status();
-        write!(head, "HTTP/1.1 {} {}\r\n", status, reason)?;
+        write!(head, "HTTP/1.1 {status} {reason}\r\n")?;
 
         self.finalize_headers();
         let mut headers = self.response.iter().collect::<Vec<_>>();
         headers.sort_unstable_by_key(|(h, _)| h.as_str());
         for (header, values) in headers {
             for value in values.iter() {
-                write!(head, "{}: {}\r\n", header, value)?;
+                write!(head, "{header}: {value}\r\n")?;
             }
         }
         write!(head, "\r\n")?;

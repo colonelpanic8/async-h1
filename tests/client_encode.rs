@@ -1,5 +1,5 @@
 mod client_encode {
-    use async_h1::client;
+    use async_h1_2::client;
     use async_std::io::Cursor;
     use async_std::prelude::*;
     use client::Encoder;

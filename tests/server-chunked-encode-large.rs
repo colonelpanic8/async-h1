@@ -1,4 +1,4 @@
-use async_h1::{client, server};
+use async_h1_2::{client, server};
 use http_types::Body;
 use http_types::Method;
 use http_types::Request;

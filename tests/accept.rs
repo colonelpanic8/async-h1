@@ -1,7 +1,7 @@
 mod test_utils;
 mod accept {
     use super::test_utils::TestServer;
-    use async_h1::{client::Encoder, server::ConnectionStatus};
+    use async_h1_2::{client::Encoder, server::ConnectionStatus};
     use async_std::io::{self, prelude::WriteExt, Cursor};
     use http_types::{headers::CONNECTION, Body, Request, Response, Result};
 

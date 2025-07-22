@@ -4,7 +4,7 @@ mod client_decode {
     use std::io::Write;
 
     use super::test_utils::CloseableCursor;
-    use async_h1::client;
+    use async_h1_2::client;
     use async_std::io::Cursor;
     use http_types::headers;
     use http_types::Response;

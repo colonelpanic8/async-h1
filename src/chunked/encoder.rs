@@ -38,8 +38,8 @@ impl<R: Read + Unpin> Read for ChunkedEncoder<R> {
         if bytes == 0 {
             self.done = true;
         }
-        let start = format!("{:X}\r\n", bytes);
-        let start_length = start.as_bytes().len();
+        let start = format!("{bytes:X}\r\n");
+        let start_length = start.len();
         let total = bytes + start_length + 2;
         buf.copy_within(..bytes, start_length);
         buf[..start_length].copy_from_slice(start.as_bytes());
@@ -98,12 +98,11 @@ mod test_bytes_to_read {
             let actual = super::max_bytes_to_read(input);
             assert_eq!(
                 actual, expected,
-                "\n\nexpected max_bytes_to_read({}) to be {}, but it was {}",
-                input, expected, actual
+                "\n\nexpected max_bytes_to_read({input}) to be {expected}, but it was {actual}"
             );
 
             // testing the test:
-            let used_bytes = expected + 4 + format!("{:X}", expected).len();
+            let used_bytes = expected + 4 + format!("{expected:X}").len();
             assert!(
                 used_bytes == input || used_bytes == input - 1,
                 "\n\nfor an input of {}, expected used bytes to be {} or {}, but was {}",

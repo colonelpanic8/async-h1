@@ -1,5 +1,5 @@
 mod server_encode {
-    use async_h1::server::Encoder;
+    use async_h1_2::server::Encoder;
     use async_std::io::Cursor;
     use async_std::io::ReadExt;
     use http_types::Body;
